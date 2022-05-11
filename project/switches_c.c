@@ -50,21 +50,16 @@ void wdt_c_handler()
 {
   static int sec2Count = 0;
   static int sec1Count = 0;
-  if (sec2Count++ >= 125) {/* 2/sec */
+  sec2Count +=1;
+  if (sec2Count >= 125) {/* 2/sec */
     sec2Count = 0;
-    secondsW++;
-    // current_color = (current_color+1) % NUM_SQCOLORS;
-    // redrawScreen = 1;
-  }
-  if (sec1Count++ >= 250) {/* 1/sec */
-    sec1Count = 0;
-    /* if (secondsW >=5){
-      secondsW = 0;
-      clearScreen(COLOR_PINK);
-      return;
-      }*/
     // secondsW++;
-    // current_position = (current_position+1) % NUM_POSITIONS;
+   
+  }
+  sec1Count +=1; 
+  if (sec1Count>= 250) {/* 1/sec */
+    sec1Count = 0;
+    secondsW++;
     redrawScreen = 1;
   }
 }

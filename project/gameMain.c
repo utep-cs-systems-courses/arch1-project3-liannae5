@@ -6,6 +6,15 @@
 #include "buzzer.h"
 
 void update_shape();
+void paradiddle1();
+void paradiddle2();
+void paradiddle3();
+void paradiddle4();
+void start_screen();
+void choose_paradiddle();
+void drawChar8x12(u_char rcol, u_char rrow, char c,  u_int fgColorBGR, u_int bgColorBGR);
+void drawString8x12(u_char col, u_char row, char *string, u_int fgColorBGR, u_int bgColorBGR);
+
 int BG_COLOR = COLOR_BLUE;
 void main()
 {
@@ -28,99 +37,170 @@ void main()
     P1OUT |= LED;/* led on */
   }
 }
-static unsigned char row = screenHeight / 2, col = screenWidth / 2;
-static char blue = 31, green = 0, red = 31;
-static unsigned char step = 0;
-static char state = 0;
-static char width= 10;
-static int color = COLOR_RED;
+static unsigned int size = screenWidth/3;
+//square colors for kick, right, left
+static unsigned int kickC = COLOR_RED;
+static unsigned int rightC = COLOR_GREEN;
+static unsigned int leftC = COLOR_YELLOW;
+
+//buzzer sounds for kick, right, left
+static short kickS = 700;
+static short rightS = 1000;
+static short leftS = 1300;
+
+//holds which switch was last pressed
+static unsigned char sw1pressed = 0;
+static unsigned char sw2pressed = 0;
+static unsigned char sw3pressed = 0;
+static unsigned char sw4pressed = 0;
+static unsigned char nopressed =  1;
     
 void update_shape()
 {
-  /*  static unsigned char row = screenHeight / 2, col = screenWidth / 2;
-  static char blue = 31, green = 0, red = 31;
-  static unsigned char step = 0;
-  static char state = 0;
-  static char width= 10;
-  static int color = COLOR_RED;*/
-  if (switches & SW4) return;
-  down_arrow();
-  // nf_intro();
-  if(switches & SW3){
-    square_line();
+ 
+  if(secondsW >= 10 || nopressed){
+    sw1pressed = 0;
+    sw2pressed = 0;
+    sw3pressed = 0;
+    sw4pressed = 0;
+    nopressed = 1;
+    start_screen();
+  }
+  if (switches & SW1){
+    clearScreen(COLOR_BLUE);
+    sw1pressed = 1;
+    sw2pressed = 0;
+    sw3pressed = 0;
+    sw4pressed = 0;
+    nopressed = 0;
+    secondsW = 0;
+    
+  }
+  if (switches & SW2){
+    clearScreen(COLOR_BLUE);
+    sw1pressed = 0;
+    sw2pressed = 1;
+    sw3pressed = 0;
+    sw4pressed = 0;
+    nopressed = 0;
+    secondsW = 0;
+    
+  }
+  if (switches & SW3){
+    clearScreen(COLOR_BLUE);
+    sw1pressed = 0;
+    sw2pressed = 0;
+    sw3pressed = 1;
+    sw4pressed = 0;
+    nopressed = 0;
+    secondsW = 0;
+    
+  }
+  if (switches & SW4){
+    clearScreen(COLOR_BLUE);
+    sw1pressed = 0;
+    sw2pressed = 0;
+    sw3pressed = 0;
+    sw4pressed = 1;
+    nopressed = 0;
+    secondsW = 0;
+  }
+  choose_paradiddle();
+}
+
+void choose_paradiddle(){
+  if(sw1pressed){
+    paradiddle1();
+  }
+  else if(sw2pressed){
+    paradiddle2();
+  }
+  else if(sw3pressed){
+    paradiddle3();
+  }
+  else if(sw4pressed){
+    paradiddle4();
+  }
+
+}
+void paradiddle1(){
+  static unsigned char state = 0;
+  switch(state){
+  case 0://kick
+    drawString8x12(screenWidth/2,screenHeight/4,"K",COLOR_BLACK,COLOR_BLUE);
+    fillRectangle(0,screenHeight/3,screenWidth,size,COLOR_BLUE);
+    fillRectangle(screenWidth/3,screenHeight/3,size,size,kickC);
+    buzzer_set_period(kickS);
+    state = 1;
+    break;
+  case 1://right
+    fillRectangle(screenWidth/3,screenHeight/3,size,size,COLOR_BLUE);
+    fillRectangle((screenWidth/3)*2,screenHeight/3,size,size,rightC);
+    buzzer_set_period(rightS);
+    state = 2;
+    break;
+  case 2://left
+    fillRectangle((screenWidth/3)*2,screenHeight/3,size,size,COLOR_BLUE);
+    fillRectangle(0,screenHeight/3,size,size,leftC);
+    buzzer_set_period(leftS);
+    state = 0;
+    break;
+  }
+}
+void paradiddle2(){
+  static int test = 0;
+  test++;
+  if (test >100){
+    test = 0;
+  }
+}
+void paradiddle3(){
+  static int test = 0;
+  test++;
+  if (test >100){
+    test = 0;
   }
 }
 
-void down_arrow(){
-  static char state = 0;
-    switch(state){
-  case 0:
-    // clearScreen(COLOR_BLUE);
-    fillRectangle(col-width,screenHeight/3-width,width,width,COLOR_BLUE);
-    fillRectangle(0,0,width,width,COLOR_RED);
-    state = 1;
-    break;
-  case 1:
-    // clearScreen(COLOR_BLUE);
-    fillRectangle(0,0,width,width,COLOR_BLUE);
-    fillRectangle(screenWidth-width,0,width,width,COLOR_RED);
-    state = 2;
-    break;
-  case 2:
-    // clearScreen(COLOR_BLUE);
-    fillRectangle(screenWidth-width,0,width,width,COLOR_BLUE);
-    fillRectangle(col-width,screenHeight/3-width,width,width,COLOR_RED);
-    state = 0;
-    break;
-    }
-}
- void square_line(){
-   
-   fillRectangle(0,row,width+(secondsW%screenWidth),width,COLOR_BLUE);
-   fillRectangle(secondsW%screenWidth,row,width,width,COLOR_GREEN);
- }
-void nf_intro(){
-  static char nfi_state = 0;
-  static int f_note = 698;
-  static int e_note = 659;
-  static int d_note = 587;
-  static int a_note = 440;
-  static int d_flat_note = 554;
-  static int b_flat_note = 466;
-  switch(nfi_state){
-    case 0:
-      buzzer_set_period(f_note);
-      nfi_state = 1;
-      break;
-    case 1:
-      buzzer_set_period(e_note);
-      nfi_state = 2;
-      break;
-    case 2:
-      buzzer_set_period(d_note);
-      nfi_state = 3;
-      break;
-    case 3:
-      buzzer_set_period(d_flat_note);
-      nfi_state = 4;
-      break;
-    case 4:
-      buzzer_set_period(d_note);
-      nfi_state = 5;
-      break;
-    case 5:
-      buzzer_set_period(d_flat_note);
-      nfi_state = 6;
-      break;
-    case 6:
-      buzzer_set_period(a_note);
-      nfi_state = 7;
-      break;
-    case 7:
-      buzzer_set_period(b_flat_note);
-      nfi_state = 0;
-      break;
+void paradiddle4(){
+  static int test = 0;
+  test++;
+  if (test >100){
+    test = 0;
   }
-  
-}  
+}
+void start_screen(){
+  turn_buzzer_off();
+  clearScreen(COLOR_BLACK);
+  // redrawScreen = 0;
+}
+    
+    
+void drawChar8x12(u_char rcol, u_char rrow, char c,  u_int fgColorBGR, u_int bgColorBGR) 
+{
+  u_char col = 0;
+  u_char row = 0;
+  u_char bit = 0x01;
+  u_char oc = c - 0x20;
+
+  lcd_setArea(rcol, rrow, rcol + 7, rrow + 12); /* relative to requested col/row */
+  while (row < 13) {
+    while (col < 8) {
+      u_int colorBGR = (font_8x12[oc][col] & bit) ? fgColorBGR : bgColorBGR;
+      lcd_writeColor(colorBGR);
+      col++;
+    }
+    col = 0;
+    bit <<= 1;
+    row++;
+  }
+}
+void drawString8x12(u_char col, u_char row, char *string, u_int fgColorBGR, u_int bgColorBGR)
+{
+  u_char cols = col;
+  while (*string) {
+    drawChar8x12(cols, row, *string++, fgColorBGR, bgColorBGR);
+    cols += 9;
+  }
+}
 

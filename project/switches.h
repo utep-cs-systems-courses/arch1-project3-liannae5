@@ -11,7 +11,7 @@
 extern char switch_update_interrupt_sense();
 extern void switch_interrupt_handler();
 extern void switch_init();
-extern void wdt_c_handler();
+//extern void wdt_c_handler();
 extern int switches;  
 extern char p2val;
 extern char current_position;
