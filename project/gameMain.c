@@ -170,8 +170,8 @@ void paradiddle2(){
     break;
   case 2://left
     drawString5x7(screenWidth/2,screenHeight/4,"L",COLOR_BLACK,COLOR_BLUE);
-    fillRectangle((screenWidth/3)*2,screenHeight/3,size,size,color_picker(secondsW));
-    fillRectangle(0,screenHeight/3,size,size,leftC);
+    fillRectangle((screenWidth/3)*2,screenHeight/3,size,size,COLOR_BLUE);
+    fillRectangle(0,screenHeight/3,size,size,color_picker(secondsW));
     buzzer_set_period(leftS);
     state = 3;
     rand +=2;
