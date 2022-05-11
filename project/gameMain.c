@@ -13,7 +13,7 @@ void paradiddle3();
 void paradiddle4();
 void start_screen();
 void choose_paradiddle();
-extern unsigned short rand = 0;
+unsigned short rand = 0;
 int BG_COLOR = COLOR_BLUE;
 void main()
 {
