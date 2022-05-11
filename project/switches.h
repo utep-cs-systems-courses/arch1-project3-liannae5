@@ -14,6 +14,5 @@ extern void switch_init();
 //extern void wdt_c_handler();
 extern int switches;  
 extern char p2val;
-extern char current_position;
 extern int redrawScreen;
 extern int secondsW;

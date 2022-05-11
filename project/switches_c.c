@@ -39,7 +39,6 @@ switch_interrupt_handler()
     for (char swNum = 0; swNum < 4; swNum++) { /* respond to lowest button pressed */
       int swFlag = 1 << swNum;
       if (switches & swFlag) {
-	//current_position = swNum;
 	break;
       }
     }
@@ -53,14 +52,12 @@ void wdt_c_handler()
   sec2Count +=1;
   if (sec2Count >= 125) {/* 2/sec */
     sec2Count = 0;
-    // secondsW++;
-   
+    redrawScreen = 1;
   }
   sec1Count +=1; 
   if (sec1Count>= 250) {/* 1/sec */
     sec1Count = 0;
     secondsW++;
-    redrawScreen = 1;
   }
 }
 
